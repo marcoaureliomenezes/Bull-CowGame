@@ -1,6 +1,11 @@
-#pragma once
+/*	 The game logic ( no view code or direct user interaction).
+	The game is a simple guess the word based on Mastermind
+*/
 
+#pragma once
 #include <string>
+
+// To make syntax in Unreal friendly
 using FString = std::string;
 using int32 = int;
 
@@ -19,7 +24,6 @@ enum class EGuessStatus
 	Not_Lowercase
 };
 
-
 class FBullCowGame {
 public:
 
@@ -29,16 +33,18 @@ public:
 	int32 GetCurrentTry() const;
 	bool IsGameWon() const;
 	int32 GetHiddenWordLength() const;
-	EGuessStatus CheckGuessValidity(FString) const; // TODO Make a more rich return validation
+	EGuessStatus CheckGuessValidity(FString) const;
 
 	void Reset();
 
-	// counts bulls & cows and increases try # assuming valid guess
 	FBullCowCount SubmitValidGuess(FString);
 
 private:
+	// See constructor for initialisation
 	int32 MyCurrentTry;
-	int32 MyMaxTries;
 	FString MyHiddenWord;
 	bool bGameIsWon;
+
+	bool IsAnIsogram(FString) const;
+	bool IsLowerCase(FString) const;
 };

@@ -3,24 +3,32 @@ This acts as the view in a MVC pattern. and is responsible for all
 user interations. For game logic see the FBullCowGame class
 */
 
+#pragma once
 #include "pch.h"
 #include <iostream>
 #include <string>
 #include "FBullCowGame.h"
 
+// To make syntax in Unreal friendly
 using FText = std::string;
 using int32 = int;
 
-void printIntroduction(void);
+// function prototypes as outside a class
+void printIntroduction();
 void playGame();
 bool askToPlayAgain();
-FText GetValidGuess(void);
+FText GetValidGuess();
+void PrintGameSummary();
 
-FBullCowGame BCGame; // instantiate a new game
+FBullCowGame BCGame; // Instantiate a new game
 
+/* The main fucntion is where the program begins to be executed.
+	By concepts about abstraction and encapsulation it contains
+	the following operation. Do the boolean variable bPlayAgain as
+	false, and repeats the sequence PrintIntroduction() and playGame() 
+	until the player changes bPlayAgain by function askToPlayAgain */
 int main()
 {
-
 	bool bPlayAgain = false;
 	do {
 		printIntroduction();
@@ -32,35 +40,55 @@ int main()
 	return 0;
 }
 
+
+
+/*	The printIntroduction() function prints in the console a
+	initial message to the player.
+*/
 void printIntroduction(void) { 
-	// Introduce the game 
-	std::cout << "\n\nWelcome to Bulls and Cows, a word fun game! \n";
+	
+	std::cout << "\n\nWelcome to Bulls and Cows, a fun word game.\n";
+	std::cout << "Welcome to Bulls and Cows, a fun word game.\n";
+	std::cout << std::endl;
+	std::cout << "          }   {         ___ " << std::endl;
+	std::cout << "          (o o)        (o o) " << std::endl;
+	std::cout << "   /-------\\ /          \\ /-------\\ " << std::endl;
+	std::cout << "  / | BULL |O            O| COW  | \\ " << std::endl;
+	std::cout << " *  |-,--- |              |------|  * " << std::endl;
+	std::cout << "    ^      ^              ^      ^ " << std::endl;
 	std::cout << "Can you guess " << BCGame.GetHiddenWordLength();
 	std::cout << " letter isogram I'm thinking of? \n";
 	std::cout << std::endl;
 	return;
 }
 
+/* The playGame() function is where the game is really played.
+	It resets the game, get the maximum of tries and while the 
+	game is not won or the number of tries is extrapolated, the
+	function call a valid guess as input
+	*/
 void playGame()
 {
 	BCGame.Reset();
 	int MaxTries = BCGame.GetMaxTries();
 
-	// loop  asking for guesses while the game is NOT won
-	// and there are still tries remaining
-	while (!BCGame.IsGameWon() && BCGame.GetCurrentTry() <= MaxTries)  {
+	while (!BCGame.IsGameWon() && BCGame.GetCurrentTry() <= MaxTries)  
+	{
 		FText Guess = GetValidGuess();
 		
-		// submit valid guess to the game, and receive counts
 		FBullCowCount BullCowCount = BCGame.SubmitValidGuess(Guess);
 
-		std::cout << "Bulls = " << BullCowCount.Bulls;  // TODO Make a valid input
+		std::cout << "Bulls = " << BullCowCount.Bulls;
 		std::cout << " Cows = " << BullCowCount.Cows << "\n\n";
-
 	}
-	// TODO Summary game
+	PrintGameSummary();
+	return;
 }
 
+/*	The askToPlayAgain() boolean function asks the
+	player if he wants play again and returns true
+	if response is "y" or "Y" and false if not. 
+*/
 bool askToPlayAgain()
 {
 	std::cout << "Do you wanna play again? (y/n)";
@@ -72,7 +100,9 @@ bool askToPlayAgain()
 	return false;
 }
 
-// loop continually until the user gives a valid guess
+/*	The GetValidGuess() function asks the player to enter with a guess,
+	check the validity of that guess using the function checkGuessValidity()
+	from the class FBullCowGame. If OK it returns the guess.*/
 FText GetValidGuess(void) 
 {
 	EGuessStatus Status = EGuessStatus::Invalid_Status;
@@ -80,27 +110,41 @@ FText GetValidGuess(void)
 	do
 	{
 		int32 CurrentTry = BCGame.GetCurrentTry();
-		std::cout << "Try " << CurrentTry << ". Enter your guess: ";
+		std::cout << "Try " << CurrentTry << " of " << BCGame.GetMaxTries();
+		std::cout << ". Enter your guess! ";
 		std::getline(std::cin, Guess);
 
 		EGuessStatus Status = BCGame.CheckGuessValidity(Guess);
 		switch (Status)
 		{
 		case EGuessStatus::Wrong_Length:
-			std::cout << "Please enter with a " << BCGame.GetHiddenWordLength() << " letter word. \n";
+			std::cout << "Please enter with a " << BCGame.GetHiddenWordLength() << " letter word. \n\n";
 			break;
 		case EGuessStatus::Not_Isogram:
-			std::cout << "Enter with a word without repeating letters. \n";
+			std::cout << "Enter with a word without repeating letters. \n\n";
 			break;
 		case EGuessStatus::Not_Lowercase:
-			std::cout << "Please enter all lowercase letters. \n";
+			std::cout << "Please enter all lowercase letters. \n\n";
 			break;
 		default:
 			return Guess;
 			break;
 		}
-		
-		std::cout << std::endl;
-	} while (Status != EGuessStatus::OK); // keep looping until we get a valid input
-	
+	} while (Status != EGuessStatus::OK);	
+}
+
+/*	The PrintGameSummary() function says the the player
+	if he won or lost the game
+*/
+void PrintGameSummary()
+{
+	if (BCGame.IsGameWon() == true)
+	{
+		std::cout << "Congratulations, you won the game.\n";
+	}
+	else
+	{
+		std::cout << "Try again, you lose.\n";
+	}
+	return;
 }
