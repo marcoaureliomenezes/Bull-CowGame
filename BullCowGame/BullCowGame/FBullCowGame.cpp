@@ -3,6 +3,7 @@
 #include "pch.h"
 #include "FBullCowGame.h"
 #include <map>
+#include <iostream>
 
 // To make syntax in Unreal friendly
 #define TMap std::map
@@ -34,6 +35,7 @@ void FBullCowGame::Reset()
 	bGameIsWon = false;
 	return;
 }
+
 
 /*	The CheckGuessValidity() function performs validation on
 	the inputs provided by the player. It checks if the input 

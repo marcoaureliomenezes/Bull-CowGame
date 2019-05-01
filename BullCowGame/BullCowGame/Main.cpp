@@ -8,6 +8,8 @@ user interations. For game logic see the FBullCowGame class
 #include <iostream>
 #include <string>
 #include "FBullCowGame.h"
+#include <fstream>
+using namespace std;
 
 // To make syntax in Unreal friendly
 using FText = std::string;
@@ -19,6 +21,7 @@ void playGame();
 bool askToPlayAgain();
 FText GetValidGuess();
 void PrintGameSummary();
+void getHiddenWord();
 
 FBullCowGame BCGame; // Instantiate a new game
 
@@ -29,6 +32,7 @@ FBullCowGame BCGame; // Instantiate a new game
 	until the player changes bPlayAgain by function askToPlayAgain */
 int main()
 {
+	getHiddenWord();
 	bool bPlayAgain = false;
 	do {
 		printIntroduction();
@@ -48,7 +52,6 @@ int main()
 void printIntroduction(void) { 
 	
 	std::cout << "\n\nWelcome to Bulls and Cows, a fun word game.\n";
-	std::cout << "Welcome to Bulls and Cows, a fun word game.\n";
 	std::cout << std::endl;
 	std::cout << "          }   {         ___ " << std::endl;
 	std::cout << "          (o o)        (o o) " << std::endl;
@@ -147,4 +150,21 @@ void PrintGameSummary()
 		std::cout << "Try again, you lose.\n";
 	}
 	return;
+}
+
+void getHiddenWord()
+{
+	FString line;
+	ifstream myfile("C:\\users\\marco\\source\\repos\\BuildingScapeDadaia\\BuildingScapeDadaia\\Source\\BuildingScapeDadaia\\lista_Isogramas.txt"); // ifstream = padrão ios:in
+	if (myfile.is_open())
+	{
+		while (!myfile.eof()) //enquanto end of file for false continua
+		{
+			getline(myfile, line); // como foi aberto em modo texto(padrão)
+								   //e não binário(ios::bin) pega cada linha
+			cout << line << std::endl;
+		}
+		myfile.close();
+	}
+	else std::cout << "Unable to open file";
 }
